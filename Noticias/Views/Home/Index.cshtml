@@ -1,0 +1,90 @@
+﻿@{
+    ViewData["Title"] = "Welcome!";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            background-color: #006D5B;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .main-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 1rem;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+        }
+
+        .description {
+            font-size: 1.25rem;
+            margin: 1.5rem 0;
+            max-width: 700px;
+        }
+
+        .btn-custom {
+            padding: 0.75rem 2rem;
+            margin: 0.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: 0.3s ease-in-out;
+        }
+
+        .btn-register {
+            background-color: #2B2B2B;
+            color: white;
+        }
+
+            .btn-register:hover {
+                background-color: #1A1A1A;
+            }
+
+        .btn-login {
+            background-color: white;
+            color: #2B2B2B;
+        }
+
+            .btn-login:hover {
+                background-color: #1A1A1A;
+                color: white;
+            }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <h1 class="main-title">NotiK</h1>
+        <p class="description">
+            Get key economic alerts straight to your WhatsApp. Make smarter decisions with fast, easy, and effective access to economic calendar events.
+        </p>
+        <div>
+            <a href="@Url.Action("Registro", "Usuario")" class="btn btn-custom btn-register">Sign Up</a>
+            <a href="@Url.Action("Login", "Usuario")" class="btn btn-custom btn-login">Log In</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

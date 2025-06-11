@@ -1,0 +1,191 @@
+﻿@{
+    ViewData["Title"] = "Realizar Pago";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Fuente Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            background-color: #006D5B;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .subscription-container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .subscription-box {
+            background-color: #2B2B2B;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .subscription-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .subscription-info p {
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .btn-custom {
+            background-color: #28a745;
+            color: white;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.75rem;
+            width: 100%;
+            max-width: 250px;
+            transition: 0.3s ease-in-out;
+            border: none;
+        }
+
+            .btn-custom:hover {
+                background-color: #218838;
+            }
+
+        .alert {
+            border-radius: 0.5rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+        }
+
+        .paypal-logo {
+            max-width: 200px;
+            height: auto;
+        }
+
+        .btn-cancelar {
+            background-color: #dc3545;
+        }
+
+            .btn-cancelar:hover {
+                background-color: #c82333;
+            }
+
+        #paypal-button-container-P-3DE56887DN9340601NBDUULY {
+            margin-top: 1.5rem;
+        }
+
+    </style>
+</head>
+<body>
+    @if (Context.Session.GetString("Nombre") != null)
+    {
+        <div class="subscription-container">
+            <div class="subscription-box">
+                <h2 class="subscription-title">Subscribe to our Premium service.</h2>
+
+                <div class="row">
+                    <div class="col-md-6 subscription-info">
+                        <h4>Subscription details.</h4>
+                        <p><strong>Cantidad:</strong> $2.50 USD / month</p>
+                        <p><strong>Incluye:</strong>Exclusive content, discounts, and premium benefits.</p>
+                        <p><strong>Renovación:</strong>Automatic every month, with cancellation available at any time.</p>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <img src="~/img/paypal-seeklogo.svg" alt="PayPal Logo" class="paypal-logo mb-3" />
+                        <p class="lead">Make the payment through PayPal.</p>
+
+                        <!-- Botón de PayPal -->
+                        <div id="paypal-button-container-P-3DE56887DN9340601NBDUULY"></div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <form asp-action="CancelarSuscripcion" method="post" class="mt-3">
+                        <button type="submit" class="btn btn-custom btn-cancelar">Cancelar Suscripción</button>
+                    </form>
+                </div>
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger text-center">@ViewBag.Error</div>
+                }
+
+                @if (TempData["mensajeExito"] != null)
+                {
+                    <div class="alert alert-success text-center">@TempData["mensajeExito"]</div>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="subscription-container">
+            <div class="text-center text-white">
+                <h4>You do not have the necessary permissions to access.</h4>
+                <p>Please log in to continue.</p>
+                <a href="@Url.Action("Login", "Usuario")" class="btn btn-custom mt-3">Go to login.</a>
+            </div>
+        </div>
+    }
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://www.paypal.com/sdk/js?client-id=ARmMGXgg8hcczfbIzc2sY0BOQcsNCx9BFlFYrN2gtczGS8DcZyl7y0oiRoJmFUB-s_BthWF9so1Uj3oB&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
+
+    <script>
+        paypal.Buttons({
+            style: {
+                shape: 'rect',
+                color: 'black',
+                layout: 'vertical',
+                label: 'subscribe'
+            },
+            createSubscription: function (data, actions) {
+                return actions.subscription.create({
+                    plan_id: 'P-3DE56887DN9340601NBDUULY'
+                });
+            },
+            onApprove: function (data, actions) {
+                alert('¡Subscription completed!\nID: ' + data.subscriptionID);
+
+                fetch('/PagosVista/GuardarSubscriptionId', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data.subscriptionID)
+                })
+                .then(r => {
+                    if (r.ok) {
+                        // Redirigir o mostrar mensaje
+                        alert('¡Subscription successfully saved on the server!');
+                        // window.location.href = '/';
+                    } else {
+                                alert('Error saving the subscription on the server.');
+                    }
+                })
+                .catch(() => alert('Network or server error.'));
+            }
+        }).render('#paypal-button-container-P-3DE56887DN9340601NBDUULY');
+    </script>
+</body>
+</html>

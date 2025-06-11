@@ -1,0 +1,159 @@
+﻿@using LogicaDeNegocios.Entidades
+@using Noticias.ViewModels
+@model DivisaRiesgoViewModel
+
+@{
+    ViewData["Title"] = "BOT settings";
+    var divisasDisponibles = Enum.GetValues(typeof(EnumDivisa)).Cast<EnumDivisa>().ToList();
+    var riesgosDisponibles = Enum.GetValues(typeof(EnumRiesgo)).Cast<EnumRiesgo>().ToList();
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Fuente Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #006D5B;
+            color: white;
+        }
+
+        .config-container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: start;
+            padding: 3rem 1.5rem 6rem;
+        }
+
+        .config-box {
+            background-color: #2B2B2B;
+            padding: 2.5rem 3rem;
+            border-radius: 1rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 100%;
+            color: white;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #28a745;
+            text-align: center;
+        }
+
+        .form-check-label {
+            font-weight: 600;
+            font-size: 1.1rem;
+            user-select: none;
+        }
+
+        .btn-primary {
+            background-color: #28a745;
+            border: none;
+            font-weight: 600;
+            padding: 0.6rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease;
+        }
+
+            .btn-primary:hover {
+                background-color: #1f7a33;
+            }
+
+        p.msg {
+            margin-top: 1rem;
+            font-weight: 600;
+            color: #a8d5b1;
+            text-align: center;
+        }
+
+        p.no-permission {
+            color: #ff6b6b;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            max-height: 220px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+            border-right: 2px solid #28a745;
+        }
+
+        .checkbox-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+    </style>
+</head>
+<body>
+    @if (Context.Session.GetString("Nombre") != null)
+    {
+        <div class="config-container">
+            <div class="config-box">
+                <h2>BOT settings.</h2>
+
+                <form method="post" action="@Url.Action("ConfigurarBot", "Usuario")">
+
+                    <div class="checkbox-container">
+                        <div class="form-group flex-fill">
+                            <h5 class="mb-3" style="color:#28a745;">Available currencies.</h5>
+                            @foreach (EnumDivisa divisa in divisasDisponibles)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="DivisasSeleccionadas" value="@divisa"
+                                    @(Model != null && Model.Divisas.Contains(divisa) ? "checked" : "") id="divisa_@divisa" />
+                                    <label class="form-check-label" for="divisa_@divisa">@divisa</label>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="form-group flex-fill">
+                            <h5 class="mb-3" style="color:#28a745;">Risk levels.</h5>
+                            @foreach (EnumRiesgo riesgo in riesgosDisponibles)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="RiesgosSeleccionados" value="@riesgo"
+                                    @(Model != null && Model.Riesgos.Contains(riesgo) ? "checked" : "") id="riesgo_@riesgo" />
+                                    <label class="form-check-label" for="riesgo_@riesgo">@riesgo</label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-4 w-100">Save changes.</button>
+
+                    @if (!string.IsNullOrEmpty(ViewBag.msg))
+                    {
+                        <p class="msg">@ViewBag.msg</p>
+                    }
+                </form>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p class="no-permission">You do not have the necessary permissions to access, please log in.</p>
+    }
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
